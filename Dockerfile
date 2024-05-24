@@ -271,7 +271,7 @@ RUN set -x \
         /log \
     && chown -R nobody:nogroup \
         /log \
-    && ln -s /usr/share/javascript/janus-gateway /usr/share/javascript/janus \
+    && ln -s /usr/share/javascript/janus-gateway /usr/share/javascript/janus
 
 # System Variables
 ENV \
