@@ -220,6 +220,7 @@ RUN set -x \
         wget \
         janus \
         libjs-janus-gateway \
+        vim \
     && rm -rf /var/lib/apt/lists/*
 
 # Remove rsyslog as its unneeded and hangs the container on shutdown
