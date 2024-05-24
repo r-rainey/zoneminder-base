@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:experimental
-ARG ZM_VERSION=master
+ARG ZM_VERSION=1.37.60
 ARG S6_ARCH=x86_64
 
 #####################################################################
@@ -8,7 +8,7 @@ ARG S6_ARCH=x86_64
 # Parse control file for all runtime and build dependencies         #
 #                                                                   #
 #####################################################################
-FROM python:3.13.0b1-alpine as zm-source
+FROM python:alpine as zm-source
 ARG ZM_VERSION
 WORKDIR /zmsource
 
@@ -205,6 +205,7 @@ RUN set -x \
 
 # Install additional services required by ZM ("Recommends")
 # PHP-fpm not required for apache
+# Added net-tools for arp, wget, onvif-tools for onvif-util and janus
 RUN set -x \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -216,6 +217,9 @@ RUN set -x \
         tzdata \
         net-tools \
         onvif-tools \
+        wget \
+        janus \
+        libjs-janus-gateway \
     && rm -rf /var/lib/apt/lists/*
 
 # Remove rsyslog as its unneeded and hangs the container on shutdown
@@ -266,7 +270,8 @@ RUN set -x \
         /zoneminder \
         /log \
     && chown -R nobody:nogroup \
-        /log
+        /log \
+    && ln -s /usr/share/javascript/janus-gateway /usr/share/javascript/janus \
 
 # System Variables
 ENV \
