@@ -10,6 +10,6 @@ echo "Starting janus..." | info
 # # Remove old socket if existing
 # rm /zoneminder/run/janus.socket > /dev/null 2>&1
 
-exec s6-setuidgid www-data \
-    fdmove -c 2 1 \
-      /usr/bin/janus --daemon
+# exec s6-setuidgid www-data \
+#     fdmove -c 2 1 \
+#       /usr/bin/janus --daemon
