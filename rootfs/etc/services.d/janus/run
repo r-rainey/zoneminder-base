@@ -1,0 +1,11 @@
+#!/command/with-contenv bash
+. "/usr/local/bin/logger"
+# ==============================================================================
+# janus
+# Runs janus
+# ==============================================================================
+
+echo "Starting janus..." | info
+
+exec fdmove -c 2 1 \
+  /usr/bin/janus
