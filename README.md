@@ -1,3 +1,6 @@
+# Fork from the original Zoneminder Container
+I have added a new branch *janus* that I used to build the latest version of ZoneMinder (1.37.60) and I have added Janus to the container https://janus.conf.meetecho.com/ Janus allows webrtc streaming of the cameras so ZoneMinder has less to process, reducing memory and cpu usage. There are new environment variables to configure Janus. Also the nginx.conf has been modified to add back the /zm path and add a /javascript path. Using Janus can be complex, best of luck.
+My containers are at https://hub.docker.com/r/rrainey/zoneminder
 # Zoneminder Container
 
 [![Docker Build](https://github.com/zoneminder-containers/zoneminder-base/actions/workflows/docker-build.yaml/badge.svg)](https://github.com/zoneminder-containers/zoneminder-base/actions/workflows/docker-build.yaml)
