@@ -44,6 +44,9 @@
 # videoskew = true|false (whether the plugin should perform skew
 #		analisys and compensation on incoming video RTP stream, EXPERIMENTAL)
 # videosvc = true|false (whether the video will have SVC support; works only for VP9-SVC, default=false)
+# h264sps = if using H.264 as a video codec, value of the sprop-parameter-sets
+#		that would normally be sent via SDP, but that we'll use to instead
+#		manually ingest SPS and PPS packets via RTP for streams that miss it
 # collision = in case of collision (more than one SSRC hitting the same port), the plugin
 #		will discard incoming RTP packets with a new SSRC unless this many milliseconds
 #		passed, which would then change the current SSRC (0=disabled)
@@ -80,6 +83,13 @@
 # assuming the browser supports the RTP extension in the first place.
 # playoutdelay_ext = true
 #
+# To allow mountpoints to negotiate the abs-capture-time RTP extension,
+# you can set the 'abscapturetime_src_ext_id' property to value in range 1..14 inclusive: this way, any
+# subscriber can receive the abs-capture-time of incoming RTP streams,
+# assuming the browser supports the RTP extension in the first place.
+# Incoming RTP stream should provide abs-capture-time exactly in the same header id.
+# abscapturetime_src_ext_id = 1
+#
 # The following options are only valid for the 'rtsp' type:
 # url = RTSP stream URL (only for restreaming RTSP)
 # rtsp_user = RTSP authorization username (only if type=rtsp)
@@ -109,9 +119,9 @@
 #}
 
 general: {
-	admin_key = "janusoverlord"		# If set, mountpoints can be created via API
+	admin_key = "JANUS_STREAM_KEY"		# If set, mountpoints can be created via API
 									# only if this key is provided in the request
-	rtp_port_range = "20000-20010"	# Range of ports to use for RTP/RTCP when '0' is
+	rtp_port_range = "JANUS_RTP_PORT_RANGE"	# Range of ports to use for RTP/RTCP when '0' is
 									# passed as port for a mountpoint (default=10000-60000)
 	#events = false					# Whether events should be sent to event
 									# handlers (default=true)
@@ -208,7 +218,7 @@ file-live-sample: {
 	type = "live"
 	id = 2
 	description = "a-law file source (radio broadcast)"
-	filename = "/usr/share/janus/streams/radio.alaw"
+	filename = "@streamdir@/radio.alaw"
 	audio = true
 	video = false
 	secret = "adminpwd"
@@ -226,7 +236,7 @@ file-ondemand-sample: {
 	type = "ondemand"
 	id = 3
 	description = "mu-law file source (music)"
-	filename = "/usr/share/janus/streams/music.mulaw"
+	filename = "@streamdir@/music.mulaw"
 	audio = true
 	video = false
 	secret = "adminpwd"

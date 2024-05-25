@@ -203,9 +203,15 @@ RUN set -x \
     && wget -qO - https://nginx.org/keys/nginx_signing.key | gpg --dearmor | tee /usr/share/keyrings/nginx.gpg > /dev/null \
     && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/nginx.gpg] https://nginx.org/packages/mainline/debian/ bookworm nginx" > /etc/apt/sources.list.d/nginx.list
 
+# Add the janus folder so the rootfs will be there
+# RUN set -x \
+#     && mkdir /etc/janus-stock \
+#     && mv /etc/janus/* /etc/janus-stock
+
 # Install additional services required by ZM ("Recommends")
 # PHP-fpm not required for apache
 # Added net-tools for arp, wget, onvif-tools for onvif-util and janus
+# Remove the janus configs that setup plugins not needed
 RUN set -x \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -221,7 +227,8 @@ RUN set -x \
         janus \
         libjs-janus-gateway \
         vim \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && rm /etc/janus/*
 
 # Remove rsyslog as its unneeded and hangs the container on shutdown
 RUN set -x \
@@ -248,9 +255,7 @@ RUN set -x \
     && ln -sf /proc/self/fd/1 /var/log/nginx/error.log \
     && ln -sf /usr/bin/msmtp /usr/lib/sendmail \
     && ln -sf /usr/bin/msmtp /usr/sbin/sendmail \
-    && rm -rf /etc/nginx/conf.d \
-    && mkdir /etc/janus/stock \
-    && mv /etc/janus/* /etc/janus/stock/
+    && rm -rf /etc/nginx/conf.d 
 
 # Create required folders
 RUN set -x \

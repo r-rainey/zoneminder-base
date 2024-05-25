@@ -3,5 +3,12 @@
 program_name="janus-config"
 
 echo "Configuring janus settings..." | info "[${program_name}] "
-sed -i "s/FASTCGI_BUFFERS_CONFIGURATION_STRING/${FASTCGI_BUFFERS_CONFIGURATION_STRING}/g" /etc/janus/janus.jcfg
-sed -i "s/PHP_VERSION_ENVIRONMENT_VARIABLE/${PHP_VERSION}/g" /etc/janus/janus.jcfg
+#janus.jcfg
+sed -i "s/JANUS_RTP_PORT_RANGE/${JANUS_RTP_PORT_RANGE}/g" /etc/janus/janus.jcfg
+sed -i "s/JANUS_NAT_IP/${JANUS_NAT_IP}/g" /etc/janus/janus.jcfg
+sed -i "s/JANUS_KEEP_PRIVATE_HOST/${JANUS_KEEP_PRIVATE_HOST}/g" /etc/janus/janus.jcfg
+#janus.plugin.streaming.jcfg
+sed -i "s/JANUS_STREAM_KEY/${JANUS_STREAM_KEY}/g" /etc/janus/janus.plugin.streaming.jcfg
+sed -i "s/JANUS_RTP_PORT_RANGE/${JANUS_RTP_PORT_RANGE}/g" /etc/janus/janus.plugin.streaming.jcfg
+#janus.transport.http.jcfg
+sed -i "s/JANUS_CORS_ALLOW_ORIGIN_URL/${JANUS_CORS_ALLOW_ORIGIN_URL}/g" /etc/janus/janus.transport.http.jcfg
