@@ -248,7 +248,9 @@ RUN set -x \
     && ln -sf /proc/self/fd/1 /var/log/nginx/error.log \
     && ln -sf /usr/bin/msmtp /usr/lib/sendmail \
     && ln -sf /usr/bin/msmtp /usr/sbin/sendmail \
-    && rm -rf /etc/nginx/conf.d
+    && rm -rf /etc/nginx/conf.d \
+    && mkdir /etc/janus/stock \
+    && mv /etc/janus/* /etc/janus/stock/
 
 # Create required folders
 RUN set -x \
