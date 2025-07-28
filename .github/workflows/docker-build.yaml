@@ -26,7 +26,7 @@ jobs:
             ZM_VERSION=${GITHUB_REF##*/}
           fi
           echo Building ZoneMinder ${ZM_VERSION}
-          echo "::set-output name=zmversion::${ZM_VERSION}"
+          echo "zmversion=${ZM_VERSION}" >> $GITHUB_OUTPUT
 
   build:
     name: Build Docker Image
@@ -67,7 +67,7 @@ jobs:
           install: true
 
       - name: Cache Docker layers
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         continue-on-error: true
         with:
           path: /tmp/.buildx-cache
@@ -109,7 +109,7 @@ jobs:
           docker save ci:${{ github.run_number }} | gzip > ci-${{ matrix.arch_friendly }}-${{ github.run_number }}.tar.gz
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ci-${{ matrix.arch_friendly }}-${{ github.run_number }}
           path: ci-${{ matrix.arch_friendly }}-${{ github.run_number }}.tar.gz
@@ -133,7 +133,7 @@ jobs:
         uses: docker/setup-qemu-action@v3
 
       - name: Download container artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: ci-${{ matrix.arch }}-${{ github.run_number }}
 
@@ -147,32 +147,32 @@ jobs:
         timeout-minutes: 5
         run: |
           set -x
-          docker-compose -f docker-compose.test.yml up &
+          docker compose -f docker-compose.test.yml up &
           sleep 60
           if [ ! "$(docker ps -q -f name=zoneminder)" ]; then
               exit 1
           fi
-          docker-compose -f docker-compose.test.yml down
-          docker-compose -f docker-compose.test.yml up &
+          docker compose -f docker-compose.test.yml down
+          docker compose -f docker-compose.test.yml up &
           sleep 60
-          docker-compose -f docker-compose.test.yml down
+          docker compose -f docker-compose.test.yml down
 
       # Fails if zoneminder fails to stop normally
       - name: Start image and stop zoneminder
         timeout-minutes: 5
         run: |
           set -x
-          docker-compose -f docker-compose.test.yml up &
+          docker compose -f docker-compose.test.yml up &
           sleep 60
           docker stop zoneminder
-          docker-compose -f docker-compose.test.yml down
+          docker compose -f docker-compose.test.yml down
 
       # Fails if zoneminder doesn't stop when db is down
       - name: Start image and stop db
         timeout-minutes: 5
         run: |
           set -x
-          docker-compose -f docker-compose.test.yml up &
+          docker compose -f docker-compose.test.yml up &
           sleep 120
           docker stop db
           sleep 60
@@ -189,10 +189,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download container artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
 
       - name: Upload Release Asset
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: ci-*/ci-*.tar.gz
           body: Automated release of ZoneMinder v${{ needs.getversion.outputs.build-version }}
@@ -234,7 +234,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Download container artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: ci-${{ matrix.arch }}-${{ github.run_number }}
 
