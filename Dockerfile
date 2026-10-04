@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:experimental
-ARG ZM_VERSION=master
+ARG ZM_VERSION=1.38.4
 ARG S6_ARCH=x86_64
 
 #####################################################################
@@ -292,12 +292,12 @@ ENV \
     FASTCGI_BUFFERS_CONFIGURATION_STRING="64 4K" \
     PUID=911 \
     PGID=911 \
-    TZ="America/Chicago" \
+    TZ="America/Los_Angeles" \
     USE_SECURE_RANDOM_ORG=1
 
 LABEL \
     com.github.alexyao2015.zoneminder_version=${ZM_VERSION}
 
-EXPOSE 80/tcp
+EXPOSE 80/tcp 8083/tcp 1984/tcp 8554/tcp 8555/tcp 6802/tcp 5541/tcp
 
 CMD ["/init"]
