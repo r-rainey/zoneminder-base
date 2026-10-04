@@ -1,0 +1,38 @@
+#!/command/with-contenv bash
+
+CONFIG_PATH="/config/go2rtc.yaml"
+
+# Check if the configuration file exists
+if [ ! -f "$CONFIG_PATH" ]; then
+    echo "$CONFIG_PATH not found! Generating a base template..."
+
+    # Ensure the parent directory exists
+    mkdir -p "$(dirname "$CONFIG_PATH")"
+
+    # Write out a clean base configuration
+    cat << 'EOF' > "$CONFIG_PATH"
+# go2rtc default template configuration
+streams:
+  # Add your cameras here using the format below:
+  # camera_one: rtsp://username:password@camera_ip:554/h264Preview_01_main
+
+api:
+  listen: ":1984"
+  origin: "*" # Required to allow ZoneMinder's web UI to connect without WebSocket errors
+
+rtsp:
+  listen: ":8554"
+
+webrtc:
+  listen: ":8555"
+EOF
+
+    # Ensure the web server daemon has permission to modify or read it later
+    chown www-data:www-data "$CONFIG_PATH"
+    chmod 664 "$CONFIG_PATH"
+    echo "✅ Base template created successfully at $CONFIG_PATH."
+fi
+
+# Hand execution over to go2rtc cleanly using exec so s6 can manage the PID
+echo "Starting go2rtc streaming core..."
+exec /usr/local/bin/go2rtc -config "$CONFIG_PATH"
