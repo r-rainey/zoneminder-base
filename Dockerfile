@@ -68,6 +68,27 @@ RUN set -x \
 
 #####################################################################
 #                                                                   #
+# Compile RTSPtoWeb from Source & Download go2rtc                   #
+#                                                                   #
+#####################################################################
+FROM golang:alpine as stream-downloader
+WORKDIR /download
+    
+RUN set -x \
+    && apk add --no-check-certificate git wget tar
+    
+# 1. Clone and compile RTSPtoWeb natively
+RUN set -x \
+    && git clone https://github.com/deepch/RTSPtoWeb.git /go/src/RTSPtoWeb \
+    && cd /go/src/RTSPtoWeb \
+    && GOOS=linux GOARCH=amd64 go build -ldflags "-s -w" -o /download/rtsptoweb .
+
+# 2. Fetch go2rtc static binary (pre-compiled release)
+RUN set -x \
+    && wget -O /download/go2rtc https://github.com/AlexxIT/go2rtc/releases/latest/download/go2rtc_linux_amd64
+
+#####################################################################
+#                                                                   #
 # Prepare base-image with core programs + repository                #
 #                                                                   #
 #####################################################################
@@ -231,6 +252,11 @@ COPY --from=s6downloader /s6downloader /
 
 # Copy rootfs
 COPY --from=rootfs-converter /rootfs /
+
+# Copy Streaming Engine Binaries from the Go compilation stage
+COPY --from=stream-downloader /download/rtsptoweb /usr/local/bin/rtsptoweb
+COPY --from=stream-downloader /download/go2rtc /usr/local/bin/go2rtc
+RUN chmod +x /usr/local/bin/rtsptoweb /usr/local/bin/go2rtc
 
 ## Create www-data user
 RUN set -x \
