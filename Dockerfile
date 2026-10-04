@@ -209,6 +209,7 @@ RUN set -x \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         fcgiwrap \
+        libcurl3-gnutls \
         mailutils \
         msmtp \
         nginx \
